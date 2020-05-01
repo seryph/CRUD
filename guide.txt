@@ -1,0 +1,36 @@
+- General
+
+1. Connect to DB
+2. Build out models, views, routes/controllers
+3. CRUD (Create, Read, Update, Delete)
+
+
+
+- Express JS (Node)
+
+https://expressjs.com/
+https://mongoosejs.com/
+https://sequelize.org/
+https://www.mysql.com/
+
+
+- Laravel (PHP)
+
+https://laravel.com/docs/7.x/database
+
+
+- Django (Python)
+
+https://docs.djangoproject.com/en/3.0/topics/db/
+
+
+- Spring (Java)
+
+https://spring.io/guides/gs/accessing-data-mysql/
+https://docs.spring.io/spring-boot/docs/1.4.x/reference/html/boot-features-nosql.html
+
+
+
+- .NET (C#)
+
+https://docs.microsoft.com/en-us/aspnet/web-pages/overview/data/5-working-with-data
