@@ -1,0 +1,53 @@
+<%- include('includes/header.ejs'); %>
+
+<%- include('includes/navbar.ejs'); %>
+
+
+<h1 class="center-align">Login</h1>
+
+
+<div class="row main_login_div">
+	<div>
+    <form method="POST" action="/login" class="col s8">
+      <div class="row">
+        <div class="input-field col s12">
+          <input name="email" id="email" type="email" class="validate">
+          <label for="email">Email</label>
+        </div>
+	  </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input name="password" id="password" type="password" class="validate">
+          <label for="password">Password</label>
+        </div>
+    </div>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+	  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+		<i class="material-icons right">send</i>
+	  </button>
+    </form>
+  </div>
+</div>
+
+
+<% if (typeof errors !== 'undefined') { %>
+
+  <% errors.forEach(function(error) { %>
+    <p class="red-text text-darken-3 center-align"><%= error.msg %></p>
+  <% }); %>
+
+<% } else { %>
+  
+
+<% } %>
+        
+
+
+
+
+
+
+
+
+
+<%- include('includes/footer.ejs'); %>

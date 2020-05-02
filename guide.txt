@@ -1,36 +1,41 @@
 - General
 
-1. Connect to DB
-2. Build out models, views, routes/controllers
-3. CRUD (Create, Read, Update, Delete)
+1. Create session when logged in
+2. Check to see if session exists when accessing protected routes
+3. Destroy session when logging out
+4. Add csrf protection
 
 
 
 - Express JS (Node)
 
 https://expressjs.com/
-https://mongoosejs.com/
-https://sequelize.org/
-https://www.mysql.com/
+https://www.npmjs.com/package/bcrypt
+https://www.npmjs.com/package/express-session
+https://www.npmjs.com/package/csurf
+
 
 
 - Laravel (PHP)
 
-https://laravel.com/docs/7.x/database
+https://laravel.com/docs/7.x/authentication
+https://laravel.com/docs/7.x/csrf
 
 
 - Django (Python)
 
-https://docs.djangoproject.com/en/3.0/topics/db/
+https://docs.djangoproject.com/en/3.0/topics/auth/
+https://docs.djangoproject.com/en/3.0/ref/csrf/
 
 
 - Spring (Java)
 
-https://spring.io/guides/gs/accessing-data-mysql/
-https://docs.spring.io/spring-boot/docs/1.4.x/reference/html/boot-features-nosql.html
+https://spring.io/guides/gs/securing-web/
+https://docs.spring.io/spring-security/site/docs/3.2.0.CI-SNAPSHOT/reference/html/csrf.html
 
 
 
 - .NET (C#)
 
-https://docs.microsoft.com/en-us/aspnet/web-pages/overview/data/5-working-with-data
+https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=visual-studio
+https://docs.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-3.1

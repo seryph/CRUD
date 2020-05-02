@@ -1,92 +1,197 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
+const session = require('express-session');
+const csrf = require('csurf');
+const bcrypt = require('bcrypt');
+const Auth = require('../middleware/auth');
 const router = express.Router();
-const Comment = require('../models/Comment');
+const User = require('../models/User');
 
 
 
+//   Index
 
-//   Create Comment
-router.post('/add_comment', [check('add_comment').not().isEmpty().trim().escape()] , async (req, res, next) => {
 
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.redirect('/');
-	}
-
-	try {
-  
-		const new_comment = new Comment({
-			text: req.body.add_comment
-		});
-
-  
-		const added_comment = await new_comment.save();
-		return res.redirect('/');
-	  } catch (err) {
-		console.error(err.message);
-		res.status(500).send('Server Error');
-	  }
+router.get('/', (req, res, next) => {
+	res.render('index');
 });
 
 
 
+//   Register User
+
+router.get('/register', (req, res, next) => {
+	res.render('register');
+});
 
 
-//   Read Comments
-router.get('/', async (req, res, next) => {
 
-	try {
-		const comments = await Comment.find({}) || {};
-		res.render('index', {comments: comments});
-	  } catch (err) {
-		res.render('index', {comments: comments});
-	  }
-  });
+router.post('/register',
 
 
-//  Update Comments
-router.post('/edit-product', [check('edited_comment').not().isEmpty().trim().escape()], async (req, res) => {
+	//   Validation
+
+	[
+		check('email').not().isEmpty().trim().escape().isEmail().normalizeEmail().withMessage('Email must be an email'),
+		check('password').not().isEmpty().trim().escape().isLength({ min: 6 }).withMessage('Password must be at least 6 chars long'),
+		check('confirm_password').not().isEmpty().trim().escape().withMessage('Password must be at least 6 chars long'),
+	], 
+	
+	
+	async (req, res, next) => {
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.redirect('/');
+		return res.render('register', {errors: errors.errors });
 	}
+
+	
+	
+	//  Get fields from request
+	const email = req.body.email;
+	const password = req.body.password;
+	const confirm_password = req.body.confirm_password;
+
+
+	if (password !== confirm_password){
+		return res.render('register', {errors: [{msg: "Passwords must match"}]});
+	}
+
+  
+	//   See if user already exists
 
 	try {
 
-		const comment_id = req.body.edit_comment_id;
-		const edited_text = req.body.edited_comment;
-  
-		let comment = await Comment.findById(comment_id);
-		comment.text = edited_text;
-		const updated_comment = await comment.save();
-		return res.redirect('/');
+		let existing_user = await User.findOne({ email: email });
+
+
+		//   Stop if email already exists
+		if (existing_user) {
+			return res.redirect('/signup');
+		  }
+
+
+		let hashedPassword = await bcrypt.hash(password, 12);
+
+		const user = new User({
+			email: email,
+			password: hashedPassword,
+		  });
+
+		  let result = await user.save();
+		  res.redirect('/login');
 		
-	  } catch (err) {
-		console.error(err.message);
-		res.status(500).send('Server Error');
-	  }
+	}
+	catch(err){
+		console.log(err);
+	}
 
-	  
 });
 
 
 
 
-//   Delete Comments
-router.post('/delete_comment', async (req, res) => {
-	try {
-	  const comment = await Comment.findById(req.body.comment_id);
-  
-	  await comment.remove();
-  
-	  res.redirect('/');
-	} catch (err) {
-	  console.error(err.message);
-	  res.redirect('/');
+
+
+
+
+//   Login User
+
+
+
+router.get('/login', (req, res, next) => {
+	res.render('login');
+});
+
+
+
+router.post('/login',
+
+[
+	check('email').not().isEmpty().trim().escape().isEmail().normalizeEmail(),
+	check('password').not().isEmpty().trim().escape(),
+],
+
+async (req, res, next) => {
+
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.render('login', {errors: errors.errors });
 	}
-  });
+
+	//   Get form data
+
+	const email = req.body.email;
+	const password = req.body.password;
+  
+	//  Check if the Email Field is correct
+  
+
+	try{
+		let user = await User.findOne({ email: email });
+
+		if (!user) {
+			return res.render('login', {errors: [{msg: "User does not exist"}] });
+		  }
+
+		  //   Check if passwords match
+
+		  let doMatch = await bcrypt.compare(password, user.password);
+		  if (doMatch) {
+  
+			//   Create session
+
+			req.session.LoggedIn = true;
+			req.session.user = user;
+			
+			
+			//   Save session and redirect
+
+			return req.session.save(err => {
+			  console.log(err);
+			  res.redirect('/protected');
+			});
+
+		  }
+
+		  else{
+
+			//   Redirect to login if passwords do not match
+
+			return res.render('login', {errors: [{msg: "Invalid Credentials"}] });
+		  }
+		  
+
+	}
+	catch(err){
+		console.log(err)
+	}
+	
+});
+
+
+//   Logout
+
+router.get('/logout',async (req, res, next) => {
+
+	req.session.destroy(err => {
+		console.log(err);
+		res.redirect('/');
+	  });
+	
+});
+
+
+
+
+//   Protected Page
+router.get('/protected', Auth, (req, res, next) => {
+	res.render('protected');
+});
+
+
+
+
 
 
 

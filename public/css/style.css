@@ -1,5 +1,7 @@
 
 html, body{
+	width: 100%;
+	height: 100vh;
 	margin: 0;
 	padding: 0;
 }
@@ -14,3 +16,7 @@ html, body{
 	cursor: pointer;
 }
 
+.main_login_div{
+	margin-top: 10vh;
+	margin-left: 25vw;
+}
